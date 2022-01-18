@@ -1,3 +1,4 @@
+
 const express = require('express')
 const fs = require('fs')
 const app = express()
@@ -6,6 +7,7 @@ const bodyParser = require('body-parser')
 const userRouter = require('./routers/usersRouter')
 const {logRequest} = require('./generalHelpers')
 const { v4: uuidv4 } = require("uuid");
+const { validateUser } = require("./userHelpers");
 
 app.use(bodyParser.json())
 /*
@@ -35,47 +37,36 @@ git add .
 git commit -m "message"
 git push
 */
-
-app.post("/users", validateUser, async (req, res, next) => {
-  try {
-      const { username, age, password } = req.body;
-      const data = await fs.promises
-          .readFile("./user.json", { encoding: "utf8" })
-          .then((data) => JSON.parse(data));
-      const id = uuidv4();
-      data.push({ id, username, age, password });
-      await fs.promises.writeFile("./user.json", JSON.stringify(data), {
-          encoding: "utf8",
-      });
-      res.send({ id, message: "sucess" });
-  } catch (error) {
-      next({ status: 500, internalMessage: error.message });
-  }
-});
-
-app.patch("/users/:userId", validateUser, async (req, res, next) => {
-
-});
+app.use('/users',userRouter)
 
 
-app.get('/users', async (req,res,next)=>{
-  try {
-  const age = Number(req.query.age)
-  const users = await fs.promises
-  .readFile("./user.json", { encoding: "utf8" })
-  .then((data) => JSON.parse(data));
-  const filteredUsers = users.filter(user=>user.age===age)
-  res.send(filteredUsers)
-  } catch (error) {
-  next({ status: 500, internalMessage: error.message });
-  }
 
-})
+// app.patch("/users/:userId", validateUser, async (req, res, next) => {
+
+// });
+
+
+// app.get('/users', async (req,res,next)=>{
+//   try {
+//   const age = Number(req.query.age)
+//   const users = await fs.promises
+//   .readFile("./user.json", { encoding: "utf8" })
+//   .then((data) => JSON.parse(data));
+//   const filteredUsers = users.filter(user=>user.age===age)
+//   res.send(filteredUsers)
+//   } catch (error) {
+//   next({ status: 500, internalMessage: error.message });
+//   }
+
+// })
 
 app.use(logRequest)
 
 app.use((err,req,res,next)=>{
-
+      if(err.status>=500){
+        return res.status(500).send({error:"internal server error"})
+      }
+      return res.status(err.status).send(err.message)
 })
 
 
