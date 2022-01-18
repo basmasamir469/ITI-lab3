@@ -78,25 +78,7 @@ catch(error){
 
 
 })
-router.post('/login',validateUser,async(req,res,next)=>{
-    try{
-    const{username,password,age}=req.body;
-    const data=await fs.promises.readFile('/user.json',{encoding:"utf8"}).then((data)=>JSON.parse(data));
-    const newuser={
-        username,
-        password,
-        age,
-        id:uuidv4
-    }
-    data.push(newuser);
-    await fs.promises.writeFile('/user.json',JSON.stringify(newuser),{encoding:"utf-8"});
-    res.status(200).send({message:"success"})
 
-}
-catch(error){
-        next({status:403,internalMessage:error.message})
-}
-})
 
 router.get('/',validateUser,async(req,res,next)=>{
     try{
