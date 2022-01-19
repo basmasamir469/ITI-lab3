@@ -3,9 +3,12 @@ const fs = require('fs')
 // find
 const validateUser = async (req, res, next) =>{
     try {
+        debugger
         const {username , password} = req.body;
+        console.log(username,password);
         if(!username)return res.status(422).send({message:"username is required"});
         if(!password)return res.status(422).send({message:"password is required"});
+
         const data = await fs.promises.readFile('./user.json',{encoding:'utf8'})
         const users = JSON.parse(data)
         const isUsernameExists = users.some(user=>user.username===username)

@@ -8,8 +8,8 @@ const res = require("express/lib/response");
 
 
 
-router.post("/login", validateUser, async (req,res,next)=>{
-    debugger
+router.post("/", validateUser, async (req,res,next)=>{
+  
     try {
         const { username, age, password } = req.body;
 
@@ -37,12 +37,13 @@ router.patch("/:userid",validateUser,async(req,res,next)=>{
           then((data)=>JSON.parse(data));
             
           const newuser=users.map((user)=> {
-          if(user.id !==req.params.userid) return user;
+          if(user.id !== req.params.userid) return user;
         return{
             username,
             password,
             age,
-            id:req.params.userid};
+            id:req.params.userid
+        };
             
             });
             await fs.promises.writeFile('/user.json',JSON.stringify(newuser),{encoding:"utf8"});
@@ -113,4 +114,25 @@ catch(error){
     next({status:404,internalMessage:error.message})
 }
 })
+
+router.post("/login", async (req,res,next)=>{
+    debugger
+    try {
+        const { username, password } = req.body;
+
+        const users = await fs.promises
+            .readFile("./user.json", { encoding: "utf8" })
+            .then((data) => JSON.parse(data));
+            
+       const correctuser= users.find(user=>{
+           return user.username==username &&user.password==password
+        })
+      
+        res.send({ message: "sucess" });
+    } 
+    catch (error) {
+        next({ status: 500, internalMessage: error.message });
+    }
+
+  });
 module.exports = router;

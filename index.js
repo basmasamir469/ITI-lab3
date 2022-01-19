@@ -41,24 +41,7 @@ app.use('/users',userRouter)
 
 
 
-// app.patch("/users/:userId", validateUser, async (req, res, next) => {
 
-// });
-
-
-// app.get('/users', async (req,res,next)=>{
-//   try {
-//   const age = Number(req.query.age)
-//   const users = await fs.promises
-//   .readFile("./user.json", { encoding: "utf8" })
-//   .then((data) => JSON.parse(data));
-//   const filteredUsers = users.filter(user=>user.age===age)
-//   res.send(filteredUsers)
-//   } catch (error) {
-//   next({ status: 500, internalMessage: error.message });
-//   }
-
-// })
 
 app.use(logRequest)
 
