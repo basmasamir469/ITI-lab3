@@ -8,6 +8,10 @@ const userRouter = require('./routers/usersRouter')
 const {logRequest} = require('./generalHelpers')
 const { v4: uuidv4 } = require("uuid");
 const { validateUser } = require("./userHelpers");
+var jwt = require('jsonwebtoken');
+const serverconfig=require('./serverconfig.js')
+require("./mongoconnect.js")
+const user=require('./models/User')
 
 app.use(bodyParser.json())
 /*
